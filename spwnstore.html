@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spwnstore</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 640px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="container bg-white p-6 rounded-3xl shadow-lg border border-slate-200">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-slate-800 mb-6">Spwnstore</h1>
+        <p class="text-center text-slate-500 mb-8">Pilih barang yang ingin kamu pesan di bawah ini!</p>
+
+        <!-- Product List -->
+        <div class="space-y-4 mb-8" id="product-list">
+
+            <!-- Product 1 -->
+            <div class="product-item flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-slate-200">
+                <div class="flex-grow">
+                    <p class="text-lg font-semibold text-slate-700">Buah 3.5sx</p>
+                    <p class="text-sm text-slate-500" data-price="850">Rp 850</p>
+                </div>
+                <div class="flex items-center">
+                    <label for="qty-buah" class="sr-only">Jumlah Buah</label>
+                    <input type="number" id="qty-buah" name="buah" class="w-16 text-center text-lg font-medium rounded-lg border-2 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 transition" value="0" min="0">
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-item flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-slate-200">
+                <div class="flex-grow">
+                    <p class="text-lg font-semibold text-slate-700">Shekles 1sx</p>
+                    <p class="text-sm text-slate-500" data-price="100">Rp 100</p>
+                </div>
+                <div class="flex items-center">
+                    <label for="qty-shekles" class="sr-only">Jumlah Shekles</label>
+                    <input type="number" id="qty-shekles" name="shekles" class="w-16 text-center text-lg font-medium rounded-lg border-2 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 transition" value="0" min="0">
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-item flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-slate-200">
+                <div class="flex-grow">
+                    <p class="text-lg font-semibold text-slate-700">Foto Figure Action</p>
+                    <p class="text-sm text-slate-500" data-price="2000">Rp 2.000</p>
+                </div>
+                <div class="flex items-center">
+                    <label for="qty-figure" class="sr-only">Jumlah Foto Figure Action</label>
+                    <input type="number" id="qty-figure" name="foto figure action" class="w-16 text-center text-lg font-medium rounded-lg border-2 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 transition" value="0" min="0">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary bg-indigo-50 p-6 rounded-2xl border-dashed border-2 border-indigo-200 mb-8">
+            <h2 class="text-xl font-bold text-indigo-900 mb-4">Keranjang Pesanan</h2>
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-slate-600 font-medium">Jumlah Barang:</span>
+                <span id="total-items" class="text-indigo-700 font-bold text-lg">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-600 font-medium">Jumlah Harga:</span>
+                <span id="total-price" class="text-indigo-700 font-bold text-lg">Rp 0</span>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Button -->
+        <button id="confirm-order-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl shadow-md transition-transform transform hover:scale-105 active:scale-95">
+            Konfirmasi Pesanan
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil semua elemen input kuantitas
+            const quantityInputs = document.querySelectorAll('input[type="number"]');
+            // Ambil elemen untuk menampilkan total
+            const totalItemsEl = document.getElementById('total-items');
+            const totalPriceEl = document.getElementById('total-price');
+            const confirmBtn = document.getElementById('confirm-order-btn');
+
+            // Fungsi untuk mengupdate total pesanan
+            const updateOrderSummary = () => {
+                let totalItems = 0;
+                let totalPrice = 0;
+
+                // Loop melalui setiap input
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value) || 0; // Pastikan nilai adalah angka
+                    const price = parseInt(input.closest('.product-item').querySelector('[data-price]').dataset.price);
+
+                    totalItems += quantity;
+                    totalPrice += quantity * price;
+                });
+
+                // Update teks di elemen HTML
+                totalItemsEl.textContent = totalItems;
+                totalPriceEl.textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+
+                // Aktifkan atau nonaktifkan tombol konfirmasi
+                if (totalItems > 0) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('bg-indigo-400');
+                    confirmBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                    confirmBtn.classList.add('bg-indigo-400');
+                }
+            };
+
+            // Tambahkan event listener untuk setiap input
+            quantityInputs.forEach(input => {
+                input.addEventListener('input', updateOrderSummary);
+            });
+
+            // Tambahkan event listener untuk tombol konfirmasi
+            confirmBtn.addEventListener('click', () => {
+                let message = "Halo, saya ingin memesan produk-produk berikut:\n\n";
+                let totalItems = 0;
+                let totalPrice = 0;
+                const products = [];
+
+                // Kumpulkan detail produk
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value) || 0;
+                    if (quantity > 0) {
+                        const productName = input.name;
+                        const price = parseInt(input.closest('.product-item').querySelector('[data-price]').dataset.price);
+                        const itemTotal = quantity * price;
+                        
+                        products.push({
+                            name: productName,
+                            quantity: quantity,
+                            price: price,
+                            total: itemTotal
+                        });
+
+                        totalItems += quantity;
+                        totalPrice += itemTotal;
+                    }
+                });
+
+                // Buat pesan untuk WhatsApp
+                if (products.length > 0) {
+                    products.forEach(p => {
+                        message += `- ${p.name} (${p.quantity} pcs) - Rp ${p.total.toLocaleString('id-ID')}\n`;
+                    });
+                    message += `\nTotal Barang: ${totalItems} pcs`;
+                    message += `\nTotal Harga: Rp ${totalPrice.toLocaleString('id-ID')}`;
+                } else {
+                    message = "Halo, saya tidak sengaja mengklik tombol konfirmasi. Mohon abaikan pesan ini.";
+                }
+
+                // URL encode pesan dan arahkan ke WhatsApp
+                const whatsappUrl = `https://wa.me/+6287712350769?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+
+            // Panggil fungsi pertama kali saat halaman dimuat
+            updateOrderSummary();
+        });
+    </script>
+
+</body>
+</html>
+
